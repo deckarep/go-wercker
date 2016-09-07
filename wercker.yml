@@ -1,3 +1,7 @@
+# References this wercker: https://github.com/RomanTsegelskyi/smsummarizer/blob/master/wercker.yml
+#
+#
+# 
 # This references the default golang container from
 # the Docker Hub: https://registry.hub.docker.com/u/library/golang/
 # If you want Google's container you would reference google/golang
@@ -44,3 +48,36 @@ build:
         name: go test
         code: |
           go test -race ./...
+
+deploy:
+  steps:
+    # push to https://hub.docker.com/r/deckarep/go-wercker/ or any docker registry of your choosing
+    - internal/docker-push:
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        repository: deckarep/go-wercker 
+        #ports: "5000"
+        #cmd: /bin/bash -c "app run"
+    - add-ssh-key:
+        keyname: DIGITAL_OCEAN # add as the key name in wercker pipeline setup (not env variable, but ssh key)
+    - add-to-known_hosts:
+        hostname: $DIGITAL_OCEAN_IP # add as environment variable (get from DigitalOcean control panel)
+    - script:
+        name: pull latest image
+        code: ssh root@$DIGITAL_OCEAN_IP docker pull deckarep/go-wercker:latest
+    - script:
+        name: stop running container
+        code: ssh root@$DIGITAL_OCEAN_IP docker stop go-wercker || echo ‘failed to stop running container’
+    - script:
+        name: remove stopped container
+        code: ssh root@$DIGITAL_OCEAN_IP docker rm go-wercker || echo ‘failed to remove stopped container’
+    - script:
+        name: remove image behind stopped container
+        code: ssh root@$DIGITAL_OCEAN_IP docker rmi deckarep/go-wercker:current || echo ‘failed to remove image behind stopped container’
+    - script:
+        name: tag newly pulled image
+        code: ssh root@$DIGITAL_OCEAN_IP docker tag deckarep/go-wercker:latest deckarep/go-wercker:current
+    - script:
+        name: run new container
+        code: ssh root@$DIGITAL_OCEAN_IP docker run -d -p 80:5000 --name go-wercker deckarep/go-wercker:current
+# END
