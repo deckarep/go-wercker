@@ -30,6 +30,7 @@ build:
     - script:
         name: go get
         code: |
+          go version
           go get
 
     # Build the project
@@ -42,4 +43,4 @@ build:
     - script:
         name: go test
         code: |
-          go test ./...
+          go test -race ./...
