@@ -53,7 +53,11 @@ build:
     - script:
         name: go test
         code: |
-          go test -race ./...
+     
+     # Copy binary to output path
+    - script:
+        name: copy binary
+        code: cp go-wercker "$WERCKER_OUTPUT_DIR"
 
 deploy:
   steps:
