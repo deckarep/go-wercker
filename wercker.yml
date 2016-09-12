@@ -40,22 +40,22 @@ build:
     # vet the project
     - script:
         name: go vet
-        code: |
-          go vet ./...
+        code: go vet ./...
+   
+    # Test the project
+    - script:
+        name: go test
+        code: go test ./...
    
     # Build the project
     - script:
         name: go build
         code: |
-          go build -o app . # Output the file and name it simply app
+          CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags="-s" -o app .
+          #go build -o app . # Output the file and name it simply app
           echo "Listing out all files..."
           ls -lah 
 
-    # Test the project
-    - script:
-        name: go test
-        code: |
-     
      # Copy binary to output path
     - script:
         name: copy binary
