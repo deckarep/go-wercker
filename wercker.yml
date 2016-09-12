@@ -48,6 +48,8 @@ build:
         name: go build
         code: |
           go build ./...
+          echo "Listing out all files..."
+          ls -lah 
 
     # Test the project
     - script:
