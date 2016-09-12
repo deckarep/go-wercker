@@ -59,7 +59,7 @@ build:
      # Copy binary to output path
     - script:
         name: copy binary
-        code: cp go-wercker "$WERCKER_OUTPUT_DIR"
+        code: mv ./go-wercker $WERCKER_OUTPUT_DIR 
 
 deploy:
   steps:
@@ -68,8 +68,8 @@ deploy:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         repository: deckarep/go-wercker 
-        ports: "8080"
         cmd: ./go-wercker # name is based on the the `go build` command which will use dir name
+        ports: "8080"
     - add-ssh-key:
         keyname: DIGITAL_OCEAN # add as the key name in wercker pipeline setup (not env variable, but ssh key)
     - add-to-known_hosts:
@@ -91,5 +91,5 @@ deploy:
         code: ssh root@$DIGITAL_OCEAN_IP docker tag deckarep/go-wercker:latest deckarep/go-wercker:current
     - script:
         name: run new container
-        code: ssh root@$DIGITAL_OCEAN_IP docker run -d -p 80:5000 --name go-wercker deckarep/go-wercker:current
-# END
+        code: ssh root@$DIGITAL_OCEAN_IP docker run -d -p 80:8080 --name go-wercker deckarep/go-wercker:current
+# EN
