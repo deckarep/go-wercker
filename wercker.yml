@@ -47,7 +47,7 @@ build:
     - script:
         name: go build
         code: |
-          go build
+          go build -o app . # Output the file and name it simply app
           echo "Listing out all files..."
           ls -lah 
 
@@ -59,7 +59,7 @@ build:
      # Copy binary to output path
     - script:
         name: copy binary
-        code: mv ./go-wercker $WERCKER_OUTPUT_DIR 
+        code: mv app "$WERCKER_OUTPUT_DIR"
 
 deploy:
   steps:
@@ -68,7 +68,7 @@ deploy:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         repository: deckarep/go-wercker 
-        cmd: ./go-wercker # name is based on the the `go build` command which will use dir name
+        cmd: ./app # name is based on the the `go build` command which will use dir name
         ports: "8080"
     - add-ssh-key:
         keyname: DIGITAL_OCEAN # add as the key name in wercker pipeline setup (not env variable, but ssh key)
