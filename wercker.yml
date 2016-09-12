@@ -47,7 +47,7 @@ build:
     - script:
         name: go build
         code: |
-          go build ./...
+          go build
           echo "Listing out all files..."
           ls -lah 
 
@@ -79,13 +79,13 @@ deploy:
         code: ssh root@$DIGITAL_OCEAN_IP docker pull deckarep/go-wercker:latest
     - script:
         name: stop running container
-        code: ssh root@$DIGITAL_OCEAN_IP docker stop go-wercker || echo ‘failed to stop running container’
+        code: ssh root@$DIGITAL_OCEAN_IP docker stop go-wercker || echo 'failed to stop running container'
     - script:
         name: remove stopped container
-        code: ssh root@$DIGITAL_OCEAN_IP docker rm go-wercker || echo ‘failed to remove stopped container’
+        code: ssh root@$DIGITAL_OCEAN_IP docker rm go-wercker || echo 'failed to remove stopped container'
     - script:
         name: remove image behind stopped container
-        code: ssh root@$DIGITAL_OCEAN_IP docker rmi deckarep/go-wercker:current || echo ‘failed to remove image behind stopped container’
+        code: ssh root@$DIGITAL_OCEAN_IP docker rmi deckarep/go-wercker:current || echo 'failed to remove image behind stopped container'
     - script:
         name: tag newly pulled image
         code: ssh root@$DIGITAL_OCEAN_IP docker tag deckarep/go-wercker:latest deckarep/go-wercker:current
