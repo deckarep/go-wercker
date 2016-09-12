@@ -1,5 +1,5 @@
 # References this wercker: https://github.com/RomanTsegelskyi/smsummarizer/blob/master/wercker.yml
-#
+
 #
 # 
 # This references the default golang container from
@@ -37,6 +37,12 @@ build:
           go version
           go get
 
+    # vet the project
+    - script:
+        name: go vet
+        code: |
+          go vet ./...
+   
     # Build the project
     - script:
         name: go build
@@ -52,12 +58,12 @@ build:
 deploy:
   steps:
     # push to https://hub.docker.com/r/deckarep/go-wercker/ or any docker registry of your choosing
-    - internal/docker-push:
+    - internal/docker-scratch-push:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         repository: deckarep/go-wercker 
-        #ports: "5000"
-        #cmd: /bin/bash -c "app run"
+        ports: "8080"
+        cmd: ./go-wercker # name is based on the the `go build` command which will use dir name
     - add-ssh-key:
         keyname: DIGITAL_OCEAN # add as the key name in wercker pipeline setup (not env variable, but ssh key)
     - add-to-known_hosts:
