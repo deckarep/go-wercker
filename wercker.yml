@@ -51,10 +51,8 @@ build:
     - script:
         name: go build
         code: |
+          # Note, when using docker scratch boxes you must statically link when building
           CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags="-s" -o app .
-          #go build -o app . # Output the file and name it simply app
-          echo "Listing out all files..."
-          ls -lah 
 
      # Copy binary to output path
     - script:
